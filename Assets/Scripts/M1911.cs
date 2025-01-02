@@ -24,6 +24,9 @@ public class M1911 : MonoBehaviour
     public XRSocketInteractor socketInteractor;
     public M1911Magazine mag;
 
+    private bool isReloaded = false;
+    public GameObject chamberBullet;
+
     private void Awake()
     {
         interactable = GetComponentInParent<XRGrabInteractable>();
@@ -55,14 +58,26 @@ public class M1911 : MonoBehaviour
     {
         //Debug.Log("이벤트 호출됨");
         //Shoot();
-        if (0 < mag.ammo)
+        if (mag == null)
+        {
+            Debug.LogError("탄창 없음");
+            return;
+        }
+
+        if (0 < mag.ammo && isReloaded)// && gunAnimator.GetBool("SlideStop") == false)
         {
             gunAnimator.SetTrigger("Fire");
+            
         }
+        //else if (mag.ammo == 1 && isReloaded)
+        //{
+        //    gunAnimator.SetBool("SlideStop", true);
+        //}
         else
         {
             Debug.Log("탄약이엄서요");
         }
+
     }
 
     public void AddMag(SelectEnterEventArgs args)
@@ -70,25 +85,34 @@ public class M1911 : MonoBehaviour
         Debug.Log("Add Mag 이벤트 호출됨");
 
         mag = args.interactableObject.transform.GetComponent<M1911Magazine>();
+        if (mag.ammo > 0)
+        {
+            chamberBullet.SetActive(true);
+        }
     }
 
     public void RemoveMag(SelectExitEventArgs args)
     {
         Debug.Log("Remove Mag 이벤트 호출됨");
-        
+
         mag = null;
-        //mag.transform.parent = null;
+        isReloaded = false;
     }
 
     public void PullSlide()
     {
-
+        //gunAnimator.SetBool("SlideStop", false);
+        isReloaded = true;
     }
 
-    //This function creates the bullet behavior
+    //애니메이션 클립에서 이벤트로 호출됨
     void Shoot()
     {
-        mag.ammo--;
+        mag.UseAmmo();
+        if (mag.ammo < 0)
+        {
+            chamberBullet.SetActive(false);
+        }
         Debug.Log($"CurrentAmmo : {mag.ammo}");
         if (muzzleFlashPrefab)
         {
@@ -106,7 +130,6 @@ public class M1911 : MonoBehaviour
 
         // Create a bullet and add force on it in direction of the barrel
         Instantiate(bulletPrefab, barrelLocation.position, barrelLocation.rotation).GetComponent<Rigidbody>().AddForce(barrelLocation.forward * shotPower);
-
     }
 
     //This function creates a casing at the ejection slot
