@@ -23,16 +23,15 @@ public class SocketReleaseButton : MonoBehaviour
     public void ReleaseObject()
     {
         Debug.Log("ReleasObject");
-        if (socket.hasSelection) // 소켓에 물건이 있을 때만 실행
+        if (socket.hasSelection) 
         {
             Debug.Log("ReleasObject 외부 if문 진입");
 
             var selectedInteractable = socket.firstInteractableSelected;
-
+            Debug.Log($"셀렉트인터렉터블 : {selectedInteractable.transform.name}");
             if (selectedInteractable != null)
             {
                 Debug.Log("ReleasObject 내부 if문 진입");
-                // interactionManager를 통해 선택 해제
                 socket.interactionManager.SelectExit(socket, selectedInteractable);
             }
         }

@@ -60,7 +60,7 @@ public class M1911 : MonoBehaviour
         //Shoot();
         if (mag == null)
         {
-            Debug.LogError("ÅºÃ¢ ¾øÀ½");
+            Debug.LogWarning("ÅºÃ¢ ¾øÀ½");
             return;
         }
 
