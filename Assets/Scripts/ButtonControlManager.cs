@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -15,13 +16,13 @@ public class ButtonControlManager : MonoBehaviour
     public GameObject targetPrefab;
     public Transform slideTarget;
     public BoxCollider[] spawnArea;
-    public Text scoreText;
-    public Text timerText;
+    public TextMeshPro scoreText;
+    public TextMeshPro timerText;
     public float minSpawnInterval;
     public float maxSpawnInterval;
     private List<GameObject> targetList;
-    private int score;
-
+    [HideInInspector]public int score;
+    private float timer=0;
 
     private void Awake()
     {
@@ -31,6 +32,12 @@ public class ButtonControlManager : MonoBehaviour
 
     public void Update()
     {
+        timer = timer - Time.deltaTime;
+        if (timer <= 0)
+        {
+            timer = 0;
+        }
+        timerText.text = $"Time: {timer:F2}";
 
     }
 
@@ -58,13 +65,11 @@ public class ButtonControlManager : MonoBehaviour
         slideTarget.gameObject.SetActive(false);
 
         score = 0;
-        float timer = 30f;
+        UpdateScore();
+        timer = 30f;
 
-        while (timer > 0f)
+        while (timer >= 0f)
         {
-
-            //timerText.text = $"Time: {timer:F1}";
-
             Bounds bounds = spawnArea[areaIndex].bounds;
 
             float x = Random.Range(bounds.min.x, bounds.max.x);
@@ -77,8 +82,6 @@ public class ButtonControlManager : MonoBehaviour
             targetList.Add(target);
             float spawnInterval = Random.Range(minSpawnInterval, maxSpawnInterval);
             yield return new WaitForSeconds(spawnInterval);
-
-            timer -= spawnInterval;
         }
 
         EndGame();
@@ -96,13 +99,13 @@ public class ButtonControlManager : MonoBehaviour
             //target.SetActive(false);
         }
         targetList.Clear();
-        //timerText.text = "Time: 0.0";
+        timer = 0f;
         StopAllCoroutines();
         slideTarget.gameObject.SetActive(true);
     }
 
     public void UpdateScore()
     {
-        //scoreText.text = $"Score : {score}";
+        scoreText.text = $"Score : {score}";
     }
 }

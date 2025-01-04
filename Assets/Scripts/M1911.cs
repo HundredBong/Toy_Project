@@ -27,9 +27,20 @@ public class M1911 : MonoBehaviour
     private bool isReloaded = false;
     public GameObject chamberBullet;
 
+    [Space(30)]
+    private AudioSource audioSource;
+    public AudioClip shotClip;
+    public AudioClip removeMagClip;
+    public AudioClip insertMagClip;
+    public AudioClip slideMoveClip;
+    public AudioClip noAmmoClip;
+
+
+
     private void Awake()
     {
         interactable = GetComponentInParent<XRGrabInteractable>();
+        audioSource = GetComponentInParent<AudioSource>();
         //socketInteractor = GetComponentInChildren<XRSocketInteractor>();
     }
 
@@ -60,7 +71,8 @@ public class M1911 : MonoBehaviour
         //Shoot();
         if (mag == null)
         {
-            Debug.LogWarning("탄창 없음");
+            //Debug.LogWarning("탄창 없음");
+            audioSource.PlayOneShot(noAmmoClip);
             return;
         }
 
@@ -75,6 +87,7 @@ public class M1911 : MonoBehaviour
         //}
         else
         {
+            audioSource.PlayOneShot(noAmmoClip);
             Debug.Log("탄약이엄서요");
         }
 
@@ -83,7 +96,7 @@ public class M1911 : MonoBehaviour
     public void AddMag(SelectEnterEventArgs args)
     {
         Debug.Log("Add Mag 이벤트 호출됨");
-
+        audioSource.PlayOneShot(insertMagClip);
         mag = args.interactableObject.transform.GetComponent<M1911Magazine>();
         if (mag.ammo > 0)
         {
@@ -93,6 +106,7 @@ public class M1911 : MonoBehaviour
 
     public void RemoveMag(SelectExitEventArgs args)
     {
+        audioSource.PlayOneShot(removeMagClip);
         Debug.Log("Remove Mag 이벤트 호출됨");
 
         mag = null;
@@ -102,12 +116,14 @@ public class M1911 : MonoBehaviour
     public void PullSlide()
     {
         //gunAnimator.SetBool("SlideStop", false);
+        audioSource.PlayOneShot(slideMoveClip);
         isReloaded = true;
     }
 
     //애니메이션 클립에서 이벤트로 호출됨
     void Shoot()
     {
+        audioSource.PlayOneShot(shotClip);
         mag.UseAmmo();
         if (mag.ammo < 0)
         {

@@ -13,7 +13,6 @@ public class M1911Slide : MonoBehaviour
     public bool wasPulled;
     private bool grabSlide;
     private XRGrabInteractable interactable;
-
     private void Awake()
     {
         interactable = GetComponent<XRGrabInteractable>();
@@ -42,7 +41,7 @@ public class M1911Slide : MonoBehaviour
 
         if (distance < offset && wasPulled == false)
         {
-            Debug.Log("³¢¾æÈ£¿ì");
+            //Debug.Log("³¢¾æÈ£¿ì");
             pullSlide.Invoke();
             wasPulled = true;
         }
@@ -50,6 +49,6 @@ public class M1911Slide : MonoBehaviour
         {
             wasPulled = false;
         }
-        Debug.Log(distance);
+        //Debug.Log(distance);
     }
 }
